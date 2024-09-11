@@ -1,0 +1,711 @@
+/* #region general stuff */
+:root {
+    --sky-color: hsl(240, 56%, 3%);
+    --grass-color: hsl(118, 78%, 37%);
+    --leafs-color: hsl(136, 64%, 42%);
+    --petal-color: hsl(332, 78%, 43%);
+    --light-color: hsl(186, 100%, 65%);
+    --ferns-color: hsl(118, 60%, 15%);
+}
+
+html {
+    color-scheme: dark !important;
+}
+
+body {
+    background-color: var(--sky-color);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+.night {
+    position: fixed;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    filter: blur(0.1vmin);
+
+    background-image: 
+    radial-gradient(ellipse at top, transparent 0%, var(--sky-color)), 
+    radial-gradient(ellipse at bottom, var(--sky-color), rgba(145, 233, 255, 0.2)),
+    repeating-linear-gradient(220deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), 
+    repeating-linear-gradient(189deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px),
+    repeating-linear-gradient(161deg, hsl(0, 0%, 0%) 0px, hsl(0, 0%, 0%) 19px, transparent 19px, transparent 22px), 
+    repeating-linear-gradient(148deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), 
+    linear-gradient(90deg, rgb(7, 107, 42), rgb(240, 240, 240));
+}
+
+.flora {
+    position: relative;
+    scale: .95;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+/* #endregion */
+
+/* #region grass */
+/* positions on screen: 1 2 5 6 3 4 */
+.patch.one {
+    --bot: 10vmin;
+    --left: -45vmin;
+    --scale: 1.1;
+    --blur: .15vmin;
+    --patch-delay: 1.5s;
+}
+.patch.two {
+    --bot: -2vmin;
+    --left: -33vmin;
+    --scale: .6;
+    --patch-delay: 2.4s;
+}
+.patch.three {
+    --bot: 1vmin;
+    --left: 32vmin;
+    --scale: .9;
+    --patch-delay: 1.9s;
+}
+.patch.four {
+    --bot: 26vmin;
+    --left: 29vmin;
+    --scale: .6;
+    --blur: .5vmin;
+    --patch-delay: 2.7s;
+}
+.patch.five {
+    --bot: -18vmin;
+    --left: -7vmin;
+    --scale: .7;
+    --blur: .3vmin;
+    --patch-delay: 4s;
+}
+.patch.six {
+    --bot: -2vmin;
+    --left: 13vmin;
+    --scale: .56;
+    --patch-delay: 3.4s;
+}
+
+.grass.patch {
+    position: absolute;
+    bottom: var(--bot);
+    left: var(--left);
+    scale: var(--scale);
+    filter: blur(var(--blur));
+}
+
+/* #region leafs */
+.leaf.one {
+    --w: 3vmin;
+    --h: 10vmin;
+    --delay: 0s;
+    --duration: 4.4s;
+    --bot: 0vmin;
+    --left: 10vmin;
+}
+.leaf.two {
+    --w: 4vmin;
+    --h: -10vmin;
+    --delay: -.2s;
+    --duration: 3.7s;
+    --bot: 4vmin;
+    --left: 0vmin;
+}
+.leaf.three {
+    --w: 3vmin;
+    --h: -30vmin;
+    --delay: -.1s;
+    --duration: 6.9s;
+    --bot: 4vmin;
+    --left: -3vmin;
+}
+.leaf.four {
+    --w: 2vmin;
+    --h: -24vmin;
+    --delay: -.3s;
+    --duration: 5.3s;
+    --bot: 0vmin;
+    --left: 14vmin;
+}
+
+.grass.leaf {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    position: absolute;
+    bottom: var(--bot);
+    left: var(--left);
+    width: calc(5vmin + var(--w));
+    height: calc(60vmin + var(--h));
+    mask-image: linear-gradient(to top, transparent 30%, var(--sky-color));
+    transform-origin: bottom center;
+}
+
+.leaf {
+    --grow-anima: grow 3s ease-out calc(0s - var(--delay) * 10 + var(--patch-delay)) backwards;
+    --wind-anima: var(--duration) linear calc(var(--delay) + 3s + (0s - var(--delay) * 10) + var(--patch-delay)) infinite backwards;
+}
+
+.leaf.left {
+    border-top-left-radius: 100%;
+    border-left: 2vmin solid var(--grass-color);
+    animation: var(--grow-anima), grass_wind_left var(--wind-anima);
+}
+
+.leaf.right {
+    border-top-right-radius: 100%;
+    border-right: 2vmin solid var(--grass-color);
+    animation: var(--grow-anima), grass_wind_right var(--wind-anima);
+}
+/* #endregion */
+
+/* #region animations */
+@keyframes grass_wind_left {
+    0%, 100% {
+        rotate: -1deg;
+    }
+    50% {
+        rotate: +4deg;
+        transform: scale(1.06);
+    }
+}
+
+@keyframes grass_wind_right {
+    0%, 100% {
+        rotate: -4deg;
+    }
+    50% {
+        rotate: +1deg;
+        transform: scale(1.06);
+    }
+}
+/* #endregion */
+
+/* #endregion */
+
+/* #region flowers */
+
+.flower.one {
+    --bot: 10vmin;
+    --left: -8vmin;
+    --fdelay: 1s;
+    --duration: 8.9s;
+    --scale: 0.68;
+    --rot: -12deg;
+}
+
+.flower.two {
+    --bot: 5vmin;
+    --left: -1.5vmin;
+    --fdelay: .1s;
+    --duration: 11.1s;
+    --scale: 1;
+    --rot: 0deg;
+}
+
+.flower.three {
+    --bot: 8vmin;
+    --left: 2vmin;
+    --fdelay: .6s;
+    --duration: 9.4s;
+    --scale: 0.82;
+    --rot: 20deg;
+}
+
+.flower {
+    position: absolute;
+    left: var(--left);
+    bottom: var(--bot);
+    scale: var(--scale);
+    rotate: var(--rot);
+    transform-origin: bottom center;
+    animation: petals_wind var(--duration) var(--fdelay) linear infinite;
+}
+
+/* #region stem */
+.stem {
+    z-index: -1;
+    height: 70vmin;
+    width: 3vmin;
+    left: 30vmin;
+    bottom: -5vmin;
+    background-color: var(--leafs-color);
+    border-radius: 1vmin;
+    mask-image: linear-gradient(to top, transparent 1%, var(--sky-color));
+    box-shadow: 1px 0px 10px 2px #0009 inset;
+    background-image: linear-gradient(to left, rgba(0, 0, 0, 0.3), transparent, rgba(255, 255, 255, .3));
+    animation: grow-flower 4s ease var(--fdelay) backwards;
+}
+
+.fleaf.one {
+    --bot: 30vmin;
+    --delay: -.4s;
+    --duration: 3.9s;
+}
+.fleaf.two {
+    --bot: 43vmin;
+    --delay: -.1s;
+    --duration: 6.3s;
+}
+
+.fleaf.right {
+    border-radius: 100% 4% 100% 4%;
+    --left: 3vmin;
+    transform-origin: bottom left;
+    --fl-anima-grow: grow-leaf-right 1.2s ease-in-out calc(var(--fdelay) + 1.6s) backwards;
+    --fl-anima-wind: grass_wind_left var(--duration) linear calc(var(--fdelay) + 2.8s + var(--delay)) infinite backwards;
+}
+.fleaf.left {
+    border-radius: 4% 100% 4% 100%;
+    --left: -10vmin;
+    transform-origin: bottom right;
+    --fl-anima-grow: grow-leaf-left 1.2s ease-in-out calc(var(--fdelay) + 1s) backwards;
+    --fl-anima-wind: grass_wind_right var(--duration) linear calc(var(--fdelay) + 2.2s + var(--delay)) infinite backwards;
+}
+
+.fleaf {
+    position: absolute;
+    bottom: var(--bot);
+    left: var(--left);
+    height: 10vmin;
+    width: 10vmin;
+    background-color: var(--leafs-color);
+    mask-image: linear-gradient(to top , transparent 1%, var(--sky-color));
+    animation: var(--fl-anima-grow), var(--fl-anima-wind);
+}
+/* #endregion */
+
+/* #region crown */
+.crown {
+    z-index: 1;
+    position: relative;
+    left: 1.5vmin;
+    border-radius: 100%;
+    animation: grow-crown 3s ease-out calc(var(--fdelay) + 1s) backwards;
+}
+
+/* glow effect by the crown of each flower */
+.crown::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, -100%);
+    height: 10vmin;
+    width: 10vmin;
+    background-color: var(--light-color);
+    border-radius: 100%;
+    filter: blur(10vmin);
+}
+
+.petal.one {
+    --rot: -95deg;
+    --bot: -4.2vmin;
+    --delay: -.2s;
+    --duration: 3.9s;
+    /* Lu ❤ :) */
+}
+
+.petal.two {
+    --rot: -70deg;
+    --bot: -3.5vmin;
+    --delay: -.3s;
+    --duration: 6.2s;
+}
+
+.petal.three {
+    --rot: -45deg;
+    --bot: -4vmin;
+    --delay: -.4s;
+    --duration: 8.1s;
+}
+
+.petal.four {
+    --rot: -20deg;
+    --bot: -3vmin;
+    --delay: -.7s;
+    --duration: 5.6s;
+}
+
+.petal.five {
+    --rot: 5deg;
+    --bot: -3.8vmin;
+    --delay: .5s;
+    --duration: 4.4s;
+}
+
+.petal {
+    z-index: 1;
+    position: absolute;
+    height: 16vmin;
+    width: 16vmin;
+    left: -8vmin;
+    bottom: var(--bot);
+    background-color: var(--petal-color);
+    border-radius: 100% 10% 100% 100%;
+    transform-origin: center;
+    rotate: var(--rot);
+    mask-image: linear-gradient(to top right, transparent -10%, var(--sky-color));
+    animation: grow-flower 3s ease calc(var(--fdelay) + 1.4s) both, petals_wind var(--duration) var(--delay) linear infinite;
+}
+
+/* this one uses "transform:" as opposed to "rotate:" 
+   to keep the original rotation as the new "0deg" */
+@keyframes petals_wind {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-2deg);
+    }
+    75% {
+        transform: rotate(+2deg) scale(1.04);
+    }
+}
+/* #endregion */
+
+/* #endregion */
+
+/* #region ferns */
+/* positions on screen: 2 4 3 1 */
+.plant.one {
+    --bot: -8vmin;
+    --left: 1vmin;
+    --plant-delay: 4.2s;
+    --duration: 8.9s;
+    --rot: 14deg;
+}
+.plant.two {
+    --bot: -6vmin;
+    --left: 1vmin;
+    --plant-delay: 4.8s;
+    --duration: 10.2s;
+    --scale: .9;
+    --rot: -12deg;
+}
+.plant.three {
+    --bot: 0vmin;
+    --left: 0vmin;
+    --plant-delay: 2.9s;
+    --duration: 7.2s;
+    --scale: .95;
+    --rot: -4deg;
+    filter: opacity(.6) blur(.1vmin);
+}
+.plant.four {
+    --bot: 12vmin;
+    --left: -5vmin;
+    --plant-delay: 3.8s;
+    --duration: 7.2s;
+    --scale: .6;
+    --rot: 4deg;
+    filter: opacity(.4) blur(.1vmin);
+}
+
+.plant.inverted {
+    transform: scaleX(-1);  /* flip (mirror) horizontally */
+    animation: fern_inverted_wind var(--duration) var(--plant-delay) linear infinite;
+}
+.plant:not(.inverted) {
+    animation: petals_wind var(--duration) var(--plant-delay) linear infinite;
+}
+
+.plant {
+    position: absolute;
+    left: var(--left);
+    bottom: var(--bot);
+    scale: var(--scale);
+    rotate: var(--rot);
+    transform-origin: bottom center;
+}
+
+.stalk {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0vmin;
+    left: 0vmin;
+    width: 20vmin;
+    height: 40vmin;
+    mask-image: linear-gradient(to top, transparent 30%, var(--sky-color));
+    transform-origin: bottom center;
+    border-top-left-radius: 100%;
+    border-left: 3vmin solid var(--ferns-color);
+    animation: grow-flower 2s ease var(--plant-delay) backwards;
+}
+
+@keyframes fern_inverted_wind {
+    0%, 100% {
+        transform: rotate(0deg) scaleX(-1);
+    }
+    25% {
+        transform: rotate(-2deg) scaleX(-1);
+    }
+    75% {
+        transform: rotate(+2deg) scaleX(-1) scale(1.04);
+    }
+}
+
+/* #region pleaves */
+
+.pleaf.one {
+    --bot: 20vmin;
+    --left: -7vmin;
+    --scale: 1;
+    --rot: -7deg;
+    --delay: .4s;
+    --duration: 5.3s;
+}
+.pleaf.two {
+    --bot: 27vmin;
+    --left: -4.5vmin;
+    --scale: .9;
+    --rot: -2deg;
+    --delay: .7s;
+    --duration: 4.9s;
+}
+.pleaf.three {
+    --bot: 33vmin;
+    --left: -1vmin;
+    --scale: .8;
+    --rot: 2deg;
+    --delay: .9s;
+    --duration: 6.3s;
+}
+.pleaf.four {
+    --bot: 37.5vmin;
+    --left: 3.5vmin;
+    --scale: .7;
+    --rot: 7deg;
+    --delay: 1.2s;
+    --duration: 6.8s;
+}
+/* left ↑ | right ↓ */
+.pleaf.six {
+    --bot: 20vmin;
+    --left: 5vmin;
+    --scale: 1;
+    --rot: -5deg;
+    --delay: .4s;
+    --duration: 5.3s;
+}
+.pleaf.seven {
+    --bot: 27vmin;
+    --left: 7vmin;
+    --scale: .9;
+    --rot: 0deg;
+    --delay: .7s;
+    --duration: 4.9s;
+}
+.pleaf.eight {
+    --bot: 33vmin;
+    --left: 10.5vmin;
+    --scale: .8;
+    --rot: 10deg;
+    --delay: .9s;
+    --duration: 6.3s;
+}
+.pleaf.nine {
+    --bot: 37.5vmin;
+    --left: 14vmin;
+    --scale: .7;
+    --rot: 15deg;
+    --delay: 1.2s;
+    --duration: 6.8s;
+}
+
+.pleaf.right {
+    border-radius: 100% 4% 100% 4%;
+    transform-origin: bottom left;
+    --pl-anima-grow: grow-leaf-right 1.2s ease-in-out calc(var(--plant-delay) + var(--delay)) backwards;
+    --pl-anima-wind: var(--duration) linear calc(var(--plant-delay) + var(--delay) + 1.2s) infinite;
+    animation: var(--pl-anima-grow), blade_wind_left var(--pl-anima-wind);
+    --add-rot: 46deg;
+}
+
+.pleaf.left {
+    border-radius: 4% 100% 4% 100%;
+    transform-origin: bottom right;
+    --pl-anima-grow: grow-leaf-right 1.2s ease-in-out calc(var(--plant-delay) + var(--delay)) backwards;
+    --pl-anima-wind: var(--duration) linear calc(var(--plant-delay) + var(--delay) + 1.2s) infinite;
+    animation: var(--pl-anima-grow), blade_wind_right var(--pl-anima-wind);
+    --add-rot: 0deg;
+}
+
+.pleaf {
+    position: absolute;
+    bottom: var(--bot);
+    left: var(--left);
+    scale: var(--scale);
+    rotate: calc(var(--rot) + var(--add-rot));
+    height: 10vmin;
+    width: 10vmin;
+    background-color: var(--ferns-color);
+    mask-image: linear-gradient(to top , transparent 1%, var(--sky-color));
+}
+/* #endregion */
+
+/* #endregion */
+
+/* #region lone grass blades */
+/* positions on screen: 1 6 4 3 5 2 */
+.blade.one {
+    --bot: -20vmin;
+    --left: -46vmin;
+    --delay: 1.1s;
+    --duration: 8.9s;
+    --scale: 1.3;
+    --rot: 0deg;
+    --blur: .3vmin;
+    --blade-color: var(--grass-color);
+}
+.blade.two {
+    --bot: -8vmin;
+    --left: 39vmin;
+    --delay: .5s;
+    --duration: 4.3s;
+    --scale: .4;
+    --rot: -10deg;
+    --blur: .4vmin;
+    --blade-color: var(--grass-color);
+}
+.blade.three {
+    --bot: 8vmin;
+    --left: -3vmin;
+    --delay: 1.2s;
+    --duration: 5.1s;
+    --scale: 1.3;
+    --rot: 10deg;
+    --blur: .2vmin;
+    --blade-color: var(--ferns-color);
+}
+.blade.four {
+    --bot: 20vmin;
+    --left: -8vmin;
+    --delay: .9s;
+    --duration: 6.3s;
+    --scale: .9;
+    --rot: -30deg;
+    --blur: .4vmin;
+    --blade-color: var(--ferns-color);
+}
+.blade.five {
+    --bot: 13vmin;
+    --left: 9vmin;
+    --delay: .8s;
+    --duration: 4.2s;
+    --scale: .6;
+    --rot: 30deg;
+    --blur: .2vmin;
+    --blade-color: var(--ferns-color);
+}
+.blade.six {
+    --bot: 15vmin;
+    --left: -10vmin;
+    --delay: 1.7s;
+    --duration: 4.8s;
+    --scale: .7;
+    --rot: -60deg;
+    --blur: .1vmin;
+    --blade-color: var(--ferns-color);
+}
+
+.blade {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    position: absolute;
+    bottom: var(--bot);
+    left: var(--left);
+    scale: var(--scale);
+    filter: blur(var(--blur));
+    rotate: var(--rot);
+    width: 10vmin;
+    height: 50vmin;
+    mask-image: linear-gradient(to top, transparent 30%, var(--sky-color));
+    transform-origin: bottom center;
+
+    --grow-anima: grow 4s ease-out var(--delay) both;
+    --wind-anima: var(--duration) linear calc(var(--delay) + 4s) infinite forwards;
+}
+
+.blade.left {
+    border-top-left-radius: 100%;
+    border-left: 2vmin solid var(--blade-color);
+    animation: var(--grow-anima), blade_wind_left var(--wind-anima);
+}
+
+.blade.right {
+    border-top-right-radius: 100%;
+    border-right: 2vmin solid var(--blade-color);
+    animation: var(--grow-anima), blade_wind_right var(--wind-anima);
+}
+
+/* #region animations */
+@keyframes blade_wind_left {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-1deg);
+    }
+    75% {
+        transform: rotate(+4deg) scale(1.06);
+    }
+}
+
+
+@keyframes blade_wind_right {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-4deg);
+    }
+    75% {
+        transform: rotate(+1deg) scale(1.06);
+    }
+}
+/* #endregion */
+
+/* #endregion */
+
+/* #region growing animations */
+@keyframes grow-crown {
+    0% {
+        transform: scale(0);
+        left: 0vmin;
+    }
+}
+
+@keyframes grow-flower {
+    0% {
+        height: 0;
+        border-radius: 10vmin;
+    }
+}
+
+@keyframes grow-leaf-left {
+    0% {
+        transform: rotate(-70deg) rotateY(30deg) scale(0);
+    }
+}
+@keyframes grow-leaf-right {
+    0% {
+        transform: rotate(70deg) rotateY(30deg) scale(0) scale(0);
+    }
+}
+
+@keyframes grow {
+    0% {
+        transform: scale(0);
+    }
+}
+/* #endregion */
